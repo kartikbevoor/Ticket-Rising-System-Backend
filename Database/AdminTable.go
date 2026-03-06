@@ -16,8 +16,8 @@ type Admin struct {
 func CreateAdminTable() {
 	adminTable := `
 	CREATE TABLE IF NOT EXISTS admin (
-		name VARCHAR(100),
 		id INT PRIMARY KEY AUTO_INCREMENT,
+		name VARCHAR(100),
 		department_id INT,
 		is_super_admin BOOLEAN,
 		username VARCHAR(100) UNIQUE,
@@ -31,12 +31,19 @@ func CreateAdminTable() {
 }
 
 func InsertIntoAdmin(admin Admin) {
-	_, err := Db.Exec(
-		"INSERT INTO admin(name, department_id, username, passwoed) VALUES(?,?.?)",
+	result, err := Db.Exec(
+		"INSERT INTO admin(name, department_id, username, password) VALUES(?,?,?)",
 		admin.Name, admin.Department_Id, admin.UserName, admin.Password,
 	)
 
 	if err != nil {
 		log.Fatal("Unable to insert into admin", err)
 	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		log.Fatal("Unable to get inserted id:", err)
+	}
+
+	admin.Id = int(id)
 }

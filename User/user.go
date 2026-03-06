@@ -3,6 +3,7 @@ package user
 import (
 	database "Ticket_Rising_Backend/Database"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -25,8 +26,13 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 // Function to verify user
 func VerifyUserCredentials(w http.ResponseWriter, r *http.Request) {
 
+	fmt.Println("VerifyUserCredentials called")
+
 	username := r.URL.Query().Get("username")
 	password := r.URL.Query().Get("password")
+
+	fmt.Println("Username:", username)
+	fmt.Println("Password:", password)
 
 	isValidUser := database.MatchUserCredentials(username, password) // Checks database to varify user
 

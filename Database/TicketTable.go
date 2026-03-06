@@ -79,3 +79,38 @@ func FetchTickets(userId int) []Ticket {
 
 	return tickets
 }
+
+// This is for admin to view tickets for reply
+func FetchAdminTickets(adminId int) []Ticket {
+	var tickets []Ticket
+
+	rows, err := Db.Query(
+		`SELECT t.id, t.description 
+		 FROM tickets t 
+		 WHERE t.department_id = (
+			SELECT department_id FROM admin WHERE id = ?)`,
+		adminId,
+	)
+
+	if err != nil {
+		log.Println("Unable to fetch tickets:", err)
+		return nil
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var ticket Ticket
+		err := rows.Scan(&ticket.Id, &ticket.Description)
+		if err != nil {
+			log.Println("Scan error:", err)
+			continue
+		}
+		tickets = append(tickets, ticket)
+	}
+
+	if err = rows.Err(); err != nil {
+		log.Println("Rows iteration error:", err)
+	}
+
+	return tickets
+}

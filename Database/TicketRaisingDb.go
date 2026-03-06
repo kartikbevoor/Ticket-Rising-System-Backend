@@ -40,3 +40,7 @@ func ConnectDb() {
 
 	Db = db
 }
+
+func ReleaseDataFromDb() {
+
+}

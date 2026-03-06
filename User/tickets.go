@@ -63,3 +63,20 @@ func Viewreplies(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(replies)
 }
+
+// This is to admin to view tickets so he can reply
+func ViewTicketsToAdmin(w http.ResponseWriter, r *http.Request) {
+
+	userIdStr := r.URL.Query().Get("id")
+
+	userId, err := strconv.Atoi(userIdStr)
+	if err != nil {
+		http.Error(w, "Invalid user id", http.StatusBadRequest)
+		return
+	}
+
+	tickets := database.FetchAdminTickets(userId) // Fetches from db
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(tickets)
+}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	admin "Ticket_Rising_Backend/Admin"
 	database "Ticket_Rising_Backend/Database"
 	user "Ticket_Rising_Backend/User"
 	"fmt"
@@ -14,19 +15,20 @@ func main() {
 
 	db() // Database
 	mux := http.NewServeMux()
-	mux.HandleFunc("/createUserAccount", user.CreateUser)    // to create user account
-	mux.HandleFunc("/userLogin", user.VerifyUserCredentials) // user login
-	mux.HandleFunc("/raiseTicket", user.CreateTicket)        // raise a ticket
-	mux.HandleFunc("/viewTickets", user.ViewTickets)         // view tickets
-	mux.HandleFunc("/viewReplies", user.Viewreplies)         // view replies
-	http.ListenAndServe(":8080", mux)
-
-	log.Println("Server running on port 8080")
+	mux.HandleFunc("/createUserAccount", user.CreateUser)          // to create user account
+	mux.HandleFunc("/userLogin", user.VerifyUserCredentials)       // user login
+	mux.HandleFunc("/raiseTicket", user.CreateTicket)              // raise a ticket
+	mux.HandleFunc("/viewTickets", user.ViewTickets)               // view tickets
+	mux.HandleFunc("/createAdminAccount", admin.CreateAdmin)       // To create admin account
+	mux.HandleFunc("/viewReplies", user.Viewreplies)               // view replies
+	mux.HandleFunc("/viewTicketsToAdmin", user.ViewTicketsToAdmin) // view tickets to admin
+	//http.ListenAndServe(":8080", mux)
 
 	err := http.ListenAndServe(":8080", mux)
 	if err != nil {
 		log.Fatal("Server failed:", err)
 	}
+	log.Println("Server running on port 8080")
 }
 
 func db() {
