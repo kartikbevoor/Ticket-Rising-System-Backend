@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"log"
 )
 
@@ -32,8 +33,8 @@ func CreateAdminTable() {
 
 func InsertIntoAdmin(admin Admin) {
 	result, err := Db.Exec(
-		"INSERT INTO admin(name, department_id, username, password) VALUES(?,?,?)",
-		admin.Name, admin.Department_Id, admin.UserName, admin.Password,
+		"INSERT INTO admin(name, department_id,is_super_admin, username, password) VALUES(?,?,?,?,?)",
+		admin.Name, admin.Department_Id, admin.IsSuperAdmin, admin.UserName, admin.Password,
 	)
 
 	if err != nil {
@@ -46,4 +47,24 @@ func InsertIntoAdmin(admin Admin) {
 	}
 
 	admin.Id = int(id)
+}
+
+func MatchAdminCredentials(username string, password string) bool {
+	var admin Admin
+
+	err := Db.QueryRow(
+		"SELECT id, name FROM admin WHERE username=? AND password=?",
+		username,
+		password,
+	).Scan(&admin.Id, &admin.Name)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false
+		}
+		log.Println("Database error:", err)
+		return false
+	}
+
+	return true
 }

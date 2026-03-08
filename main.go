@@ -20,8 +20,11 @@ func main() {
 	mux.HandleFunc("/raiseTicket", user.CreateTicket)              // raise a ticket
 	mux.HandleFunc("/viewTickets", user.ViewTickets)               // view tickets
 	mux.HandleFunc("/createAdminAccount", admin.CreateAdmin)       // To create admin account
-	mux.HandleFunc("/viewReplies", user.Viewreplies)               // view replies
+	mux.HandleFunc("/adminLogin", admin.VerifyAdminCredentials)    // admin login
 	mux.HandleFunc("/viewTicketsToAdmin", user.ViewTicketsToAdmin) // view tickets to admin
+	// admin reply to tickets
+	// super admin view tickets
+	mux.HandleFunc("/viewReplies", user.Viewreplies) // view replies
 	//http.ListenAndServe(":8080", mux)
 
 	err := http.ListenAndServe(":8080", mux)

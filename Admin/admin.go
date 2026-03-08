@@ -24,3 +24,13 @@ func CreateAdmin(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(admin)
 }
+
+func VerifyAdminCredentials(w http.ResponseWriter, r *http.Request) {
+	username := r.URL.Query().Get("username")
+	password := r.URL.Query().Get("password")
+
+	isValidAdmin := database.MatchAdminCredentials(username, password)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(isValidAdmin)
+}
