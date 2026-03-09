@@ -21,7 +21,7 @@ func main() {
 	mux.HandleFunc("/viewTickets", user.ViewTickets)               // view tickets
 	mux.HandleFunc("/createAdminAccount", admin.CreateAdmin)       // To create admin account
 	mux.HandleFunc("/adminLogin", admin.VerifyAdminCredentials)    // admin login
-	mux.HandleFunc("/viewTicketsToAdmin", user.ViewTicketsToAdmin) // view tickets to admin
+	mux.HandleFunc("/viewTicketsToAdmin", user.ViewTicketsToAdmin) // view tickets to admin  // here got to add priorty sorting of tickets
 	// admin reply to tickets
 	// super admin view tickets
 	mux.HandleFunc("/viewReplies", user.Viewreplies) // view replies

@@ -3,7 +3,7 @@ package database
 import "log"
 
 type Ticket struct {
-	Id            int    `json:"id"`
+	Id            int    `json:"id"` // `json:"id,omitempty"`
 	Department_Id int    `json:"department_id"`
 	Description   string `json:"description"`
 	User_Id       int    `json:"user_id"`
@@ -46,8 +46,15 @@ func InsertIntoTickets(ticket *Ticket, userId int) {
 	ticket.Id = int(id)
 }
 
+// omitempty
+// Creating a new response type for ticket (we can also use omitempty)
+type TicketResponseUser struct {
+	Department_Id int    `json:"department_id"`
+	Description   string `json:"description"`
+}
+
 // Fetches tickets from database
-func FetchTickets(userId int) []Ticket {
+func FetchTickets(userId int) []TicketResponseUser {
 
 	rows, err := Db.Query(
 		"SELECT department_id, description FROM tickets WHERE user_id = ?",
@@ -59,10 +66,10 @@ func FetchTickets(userId int) []Ticket {
 	}
 	defer rows.Close()
 
-	var tickets []Ticket
+	var tickets []TicketResponseUser
 
 	for rows.Next() {
-		var ticket Ticket
+		var ticket TicketResponseUser
 
 		err := rows.Scan(
 			&ticket.Department_Id,
@@ -80,9 +87,14 @@ func FetchTickets(userId int) []Ticket {
 	return tickets
 }
 
+type TicketResponseAdmin struct {
+	Id          int    `json:"id"`
+	Description string `json:"description"`
+}
+
 // This is for admin to view tickets for reply
-func FetchAdminTickets(adminId int) []Ticket {
-	var tickets []Ticket
+func FetchAdminTickets(adminId int) []TicketResponseAdmin {
+	var tickets []TicketResponseAdmin
 
 	rows, err := Db.Query(
 		`SELECT t.id, t.description 
@@ -99,7 +111,7 @@ func FetchAdminTickets(adminId int) []Ticket {
 	defer rows.Close()
 
 	for rows.Next() {
-		var ticket Ticket
+		var ticket TicketResponseAdmin
 		err := rows.Scan(&ticket.Id, &ticket.Description)
 		if err != nil {
 			log.Println("Scan error:", err)

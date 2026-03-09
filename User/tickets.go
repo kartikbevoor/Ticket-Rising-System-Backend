@@ -3,7 +3,6 @@ package user
 import (
 	database "Ticket_Rising_Backend/Database"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -68,7 +67,7 @@ func Viewreplies(w http.ResponseWriter, r *http.Request) {
 // This is to admin to view tickets so he can reply
 func ViewTicketsToAdmin(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("Sever started to get tickets")
+	// fmt.Println("Sever started to get tickets")
 	userIdStr := r.URL.Query().Get("id")
 
 	userId, err := strconv.Atoi(userIdStr)
