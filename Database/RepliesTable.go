@@ -6,8 +6,8 @@ import (
 
 type Reply struct {
 	Id        int    `json:"id"`
-	Comment   string `json:"comment"`
 	Ticket_Id int    `json:"ticket_id"`
+	Comment   string `json:"comment"`
 }
 
 func CreateRepliesTable() {
@@ -25,15 +25,22 @@ func CreateRepliesTable() {
 	}
 }
 
-func InsertIntoReplies(reply Reply) {
-	_, err := Db.Exec(
-		"INSERT INTO replies(comment, ticket_id) VALUES(?,?)",
-		reply.Comment, reply.Id,
+func InsertIntoReplies(reply *Reply, ticketId int) {
+	result, err := Db.Exec(
+		"INSERT INTO replies(ticket_id, comment) VALUES(?,?)",
+		ticketId, reply.Comment,
 	)
 
 	if err != nil {
 		log.Fatal("Unable to insert into replies", err)
 	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		log.Fatal("Unable to get inserted id:", err)
+	}
+
+	reply.Id = int(id)
 }
 
 func FetchReplies(userId int) []Reply {
