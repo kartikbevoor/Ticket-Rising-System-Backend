@@ -50,12 +50,13 @@ func ViewTickets(w http.ResponseWriter, r *http.Request) {
 }
 
 // This is to view replies
-func Viewreplies(w http.ResponseWriter, r *http.Request) {
+func ViewReplies(w http.ResponseWriter, r *http.Request) {
 	userIdStr := r.URL.Query().Get("id")
 
 	userId, err := strconv.Atoi(userIdStr)
 	if err != nil {
-		log.Fatal(err)
+		http.Error(w, "Invalid user id", http.StatusBadRequest)
+		return
 	}
 
 	replies := database.FetchReplies(userId)
@@ -68,16 +69,26 @@ func Viewreplies(w http.ResponseWriter, r *http.Request) {
 func ViewTicketsToAdmin(w http.ResponseWriter, r *http.Request) {
 
 	// fmt.Println("Sever started to get tickets")
-	userIdStr := r.URL.Query().Get("id")
+	adminIdStr := r.URL.Query().Get("id")
 
-	userId, err := strconv.Atoi(userIdStr)
+	adminId, err := strconv.Atoi(adminIdStr)
 	if err != nil {
 		http.Error(w, "Invalid user id", http.StatusBadRequest)
 		return
 	}
 
-	tickets := database.FetchAdminTickets(userId) // Fetches from db
+	// need to write code for to check for super admin if s he should view all tickets
+	isSuperAdmin := database.CheckIsSuperAdmin(adminId)
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(tickets)
+	if isSuperAdmin {
+		tickets := database.SuperAdminTickets()
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(tickets)
+	} else {
+		tickets := database.FetchAdminTickets(adminId) // Fetches from db
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(tickets)
+	}
 }

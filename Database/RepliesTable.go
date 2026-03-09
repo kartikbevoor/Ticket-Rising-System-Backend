@@ -43,10 +43,14 @@ func InsertIntoReplies(reply *Reply, ticketId int) {
 	reply.Id = int(id)
 }
 
-func FetchReplies(userId int) []Reply {
+type responseReply struct {
+	Comment string `json:"comment"`
+}
+
+func FetchReplies(userId int) []responseReply {
 
 	rows, err := Db.Query(
-		`SELECT comment, ticket_id
+		`SELECT comment
 		 FROM replies
 		 WHERE ticket_id IN (
 			 SELECT id FROM tickets WHERE user_id = ?
@@ -60,14 +64,13 @@ func FetchReplies(userId int) []Reply {
 	}
 	defer rows.Close()
 
-	var replies []Reply
+	var replies []responseReply
 
 	for rows.Next() {
-		var reply Reply
+		var reply responseReply
 
 		err := rows.Scan(
 			&reply.Comment,
-			&reply.Ticket_Id,
 		)
 
 		if err != nil {

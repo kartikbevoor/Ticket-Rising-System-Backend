@@ -53,7 +53,7 @@ type TicketResponseUser struct {
 	Description   string `json:"description"`
 }
 
-// Fetches tickets from database
+// Fetches tickets from database for user view
 func FetchTickets(userId int) []TicketResponseUser {
 
 	rows, err := Db.Query(
@@ -88,7 +88,7 @@ func FetchTickets(userId int) []TicketResponseUser {
 }
 
 type TicketResponseAdmin struct {
-	Id          int    `json:"id"`
+	// Id          int    `json:"id"`
 	Description string `json:"description"`
 }
 
@@ -97,7 +97,7 @@ func FetchAdminTickets(adminId int) []TicketResponseAdmin {
 	var tickets []TicketResponseAdmin
 
 	rows, err := Db.Query(
-		`SELECT t.id, t.description 
+		`SELECT t.description 
 		 FROM tickets t 
 		 WHERE t.department_id = (
 			SELECT department_id FROM admin WHERE id = ?)`,
@@ -112,7 +112,38 @@ func FetchAdminTickets(adminId int) []TicketResponseAdmin {
 
 	for rows.Next() {
 		var ticket TicketResponseAdmin
-		err := rows.Scan(&ticket.Id, &ticket.Description)
+		err := rows.Scan(&ticket.Description)
+		if err != nil {
+			log.Println("Scan error:", err)
+			continue
+		}
+		tickets = append(tickets, ticket)
+	}
+
+	if err = rows.Err(); err != nil {
+		log.Println("Rows iteration error:", err)
+	}
+
+	return tickets
+}
+
+func SuperAdminTickets() []TicketResponseAdmin {
+	var tickets []TicketResponseAdmin
+
+	rows, err := Db.Query(
+		`SELECT description 
+		 FROM tickets`,
+	)
+
+	if err != nil {
+		log.Println("Unable to fetch tickets:", err)
+		return nil
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var ticket TicketResponseAdmin
+		err := rows.Scan(&ticket.Description)
 		if err != nil {
 			log.Println("Scan error:", err)
 			continue

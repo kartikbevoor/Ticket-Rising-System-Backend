@@ -68,3 +68,20 @@ func MatchAdminCredentials(username string, password string) bool {
 
 	return true
 }
+
+func CheckIsSuperAdmin(adminId int) bool {
+
+	var isSuperAdmin bool
+
+	err := Db.QueryRow(
+		"SELECT is_super_admin FROM admin WHERE id = ?",
+		adminId,
+	).Scan(&isSuperAdmin)
+
+	if err != nil {
+		log.Println("Error checking super admin:", err)
+		return false
+	}
+
+	return isSuperAdmin
+}
