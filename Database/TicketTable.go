@@ -18,8 +18,10 @@ func CreateTicketTable() {
 		description TEXT NOT NULL,
 		ticket_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		user_id INT,
+		status_id int,
 		FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE CASCADE ON UPDATE CASCADE,
-		FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
+		FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+		FOREIGN KEY (status_id)	REFERENCES status(id)
 	)ENGINE=InnoDB;`
 
 	_, err := Db.Exec(ticketTable)
@@ -30,9 +32,10 @@ func CreateTicketTable() {
 
 // This inserts ticket into tickets table
 func InsertIntoTickets(ticket *Ticket, userId int) {
+	StatusId := 1
 	result, err := Db.Exec(
-		"INSERT INTO tickets(department_id,description,user_id) VALUES(?,?,?)",
-		ticket.Department_Id, ticket.Description, userId,
+		"INSERT INTO tickets(department_id,description,user_id,status_id) VALUES(?,?,?,?)",
+		ticket.Department_Id, ticket.Description, userId, StatusId,
 	)
 	if err != nil {
 		log.Fatal("Unable insert into tickets", err)
@@ -50,14 +53,19 @@ func InsertIntoTickets(ticket *Ticket, userId int) {
 // Creating a new response type for ticket (we can also use omitempty)
 type TicketResponseUser struct {
 	Department_Id int    `json:"department_id"`
+	Ticket_Status string `json:"ticket_status"`
 	Description   string `json:"description"`
 }
 
 // Fetches tickets from database for user view
+// Fetches tickets from database for user view
 func FetchTickets(userId int) []TicketResponseUser {
 
 	rows, err := Db.Query(
-		"SELECT department_id, description FROM tickets WHERE user_id = ?",
+		`SELECT t.department_id, s.type, t.description
+		 FROM tickets t
+		 JOIN status s ON t.status_id = s.id
+		 WHERE t.user_id = ?`,
 		userId,
 	)
 	if err != nil {
@@ -73,6 +81,7 @@ func FetchTickets(userId int) []TicketResponseUser {
 
 		err := rows.Scan(
 			&ticket.Department_Id,
+			&ticket.Ticket_Status,
 			&ticket.Description,
 		)
 
@@ -156,4 +165,18 @@ func SuperAdminTickets() []TicketResponseAdmin {
 	}
 
 	return tickets
+}
+
+func UpdateTicketStatusToResolved(ticketId int) {
+	ticketStatus := 3
+
+	_, err := Db.Exec(
+		"UPDATE tickets SET status_id = ? WHERE id = ?",
+		ticketStatus,
+		ticketId,
+	)
+
+	if err != nil {
+		log.Println("Updating ticket status failed:", err)
+	}
 }

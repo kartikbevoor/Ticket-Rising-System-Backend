@@ -35,6 +35,8 @@ func InsertIntoReplies(reply *Reply, ticketId int) {
 		log.Fatal("Unable to insert into replies", err)
 	}
 
+	UpdateTicketStatusToResolved(ticketId)
+
 	id, err := result.LastInsertId()
 	if err != nil {
 		log.Fatal("Unable to get inserted id:", err)
