@@ -21,7 +21,7 @@ func main() {
 	mux.HandleFunc("/viewTickets", user.ViewTickets)               // view tickets
 	mux.HandleFunc("/createAdminAccount", admin.CreateAdmin)       // To create admin account
 	mux.HandleFunc("/adminLogin", admin.VerifyAdminCredentials)    // admin login
-	mux.HandleFunc("/viewTicketsToAdmin", user.ViewTicketsToAdmin) // view tickets to admin // super admin view tickets // here got to add priorty sorting of tickets
+	mux.HandleFunc("/viewTicketsToAdmin", user.ViewTicketsToAdmin) // view tickets to admin // super admin view tickets is not working
 	mux.HandleFunc("/adminReplyToTickets", admin.CreateReply)      // Admin reply to tickets
 	mux.HandleFunc("/viewReplies", user.ViewReplies)               // view replies
 	//http.ListenAndServe(":8080", mux)
@@ -39,8 +39,12 @@ func db() {
 
 	database.CreateUserTable()       // creats user table if it does not exist
 	database.CreateDepartmentTable() // creats department table if it does not exist
+	database.CreatePriorityTable()   // creats priority table if it does not exist
+	database.CreateStatusTable()     // creats status table if it does not exists
 	database.CreateAdminTable()      // creats admin table if it does not exist
 	database.CreateTicketTable()     // creats ticket table if it does not exist
 	database.CreateRepliesTable()    // creats replies table if it does not exist
+	database.CreatePriorityTable()   // creats priority table if it does not exist
+	database.CreateStatusTable()     // creats status table if it does not exists
 	fmt.Println("Created and connected to database")
 }

@@ -1,6 +1,9 @@
 package database
 
-import "log"
+import (
+	"fmt"
+	"log"
+)
 
 func CreateStatusTable() {
 	statusTable := `CREATE TABLE IF NOT EXISTS status ( 
@@ -32,4 +35,6 @@ func CreateStatusTable() {
 	} else {
 		log.Println("Status table already has data")
 	}
+
+	fmt.Println("Created status table")
 }

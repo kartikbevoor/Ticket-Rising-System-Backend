@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"log"
 )
 
@@ -23,6 +24,7 @@ func CreateRepliesTable() {
 	if err != nil {
 		log.Fatal("Error creating user table: ", err)
 	}
+	fmt.Println("Created replies table")
 }
 
 func InsertIntoReplies(reply *Reply, ticketId int) {
