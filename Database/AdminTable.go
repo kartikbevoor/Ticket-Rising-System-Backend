@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 )
 
@@ -79,9 +80,10 @@ func CheckIsSuperAdmin(adminId int) bool {
 	).Scan(&isSuperAdmin)
 
 	if err != nil {
-		log.Println("Error checking super admin:", err)
+		// log.Println("Error checking super admin:", err)
 		return false
 	}
 
+	fmt.Println("Super admin:", isSuperAdmin)
 	return isSuperAdmin
 }

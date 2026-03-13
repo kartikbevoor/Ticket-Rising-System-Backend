@@ -2,8 +2,10 @@ package admin
 
 import (
 	database "Ticket_Rising_Backend/Database"
+	"context"
 	"encoding/json"
 	"net/http"
+	"time"
 )
 
 func AdminStarting() {
@@ -11,6 +13,10 @@ func AdminStarting() {
 }
 
 func CreateAdmin(w http.ResponseWriter, r *http.Request) {
+
+	_, cancel := context.WithTimeout(context.Background(), 100*time.Second)
+	defer cancel()
+
 	var admin database.Admin
 
 	err := json.NewDecoder(r.Body).Decode(&admin)
@@ -26,6 +32,10 @@ func CreateAdmin(w http.ResponseWriter, r *http.Request) {
 }
 
 func VerifyAdminCredentials(w http.ResponseWriter, r *http.Request) {
+
+	_, cancel := context.WithTimeout(context.Background(), 100*time.Second)
+	defer cancel()
+
 	username := r.URL.Query().Get("username")
 	password := r.URL.Query().Get("password")
 

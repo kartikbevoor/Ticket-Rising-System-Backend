@@ -28,7 +28,7 @@ func CreateDepartmentTable() {
 	}
 
 	if count == 0 {
-		initialDepartments := []string{"IT", "HR", "Sales", "Maintenance"}
+		initialDepartments := []string{"Accountant", "Accounts", "CTP", "Design", "Driver", "Press", "ProductionManager", "ProductionStaff"}
 
 		for _, name := range initialDepartments {
 			_, err := Db.Exec("INSERT INTO department (name) VALUES (?)", name)

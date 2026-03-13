@@ -2,13 +2,18 @@ package user
 
 import (
 	database "Ticket_Rising_Backend/Database"
+	"context"
 	"encoding/json"
 	"net/http"
+	"time"
 )
 
 // This is nothing but user registration
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user database.User
+
+	_, cancel := context.WithTimeout(context.Background(), 100*time.Second)
+	defer cancel()
 
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -24,6 +29,9 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 // Function to verify user
 func VerifyUserCredentials(w http.ResponseWriter, r *http.Request) {
+
+	_, cancel := context.WithTimeout(context.Background(), 100*time.Second)
+	defer cancel()
 
 	// fmt.Println("VerifyUserCredentials called")
 
